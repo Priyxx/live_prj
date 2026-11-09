@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A simple calculator to split flat rent and shared expenses.">
+  <title>RentSplit — Flat Expense Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="page-shell">
+    <nav class="topbar">
+      <a class="brand" href="/">
+        <span class="brand-mark">₹</span>
+        <span>Rent<span class="brand-light">Split</span></span>
+      </a>
+      <span class="demo-tag"><span class="dot"></span> FREE DEMO</span>
+    </nav>
+
+    <section class="hero">
+      <div class="eyebrow"><span class="eyebrow-line"></span> SHARED LIVING, SIMPLIFIED</div>
+      <h1>Split expenses.<br><span>Keep it fair.</span></h1>
+      <p class="hero-copy">Add your flat's monthly expenses and find out how much each person should contribute.</p>
+    </section>
+
+    <section class="calculator-layout">
+      <div class="form-card">
+        <div class="card-heading">
+          <div>
+            <p class="section-kicker">YOUR MONTHLY DETAILS</p>
+            <h2>Flat expenses</h2>
+          </div>
+          <span class="step-label">01 / INPUT</span>
+        </div>
+
+        <form method="POST" action="/" id="rent-form">
+          <div class="field-grid">
+            <label class="field full">
+              <span class="field-label">Total flat rent <small>₹</small></span>
+              <input type="number" name="rent" min="0" step="1" placeholder="e.g. 15000" value="{{ values.rent }}" required>
+            </label>
+            <label class="field">
+              <span class="field-label">Food expenses <small>₹</small></span>
+              <input type="number" name="food" min="0" step="1" placeholder="e.g. 6000" value="{{ values.food }}" required>
+            </label>
+            <label class="field">
+              <span class="field-label">People in flat <small>PERSONS</small></span>
+              <input type="number" name="people" min="1" step="1" placeholder="e.g. 3" value="{{ values.people }}" required>
+            </label>
+            <label class="field">
+              <span class="field-label">Electricity units <small>UNITS</small></span>
+              <input type="number" name="electricity_units" min="0" step="1" placeholder="e.g. 180" value="{{ values.electricity_units }}" required>
+            </label>
+            <label class="field">
+              <span class="field-label">Charge per unit <small>₹ / UNIT</small></span>
+              <input type="number" name="charge_per_unit" min="0" step="1" placeholder="e.g. 8" value="{{ values.charge_per_unit }}" required>
+            </label>
+          </div>
+
+          {% if error %}
+          <div class="error-message" role="alert">{{ error }}</div>
+          {% endif %}
+
+          <button class="calculate-button" type="submit">
+            Calculate my share <span aria-hidden="true">↗</span>
+          </button>
+          <p class="privacy-note"><span aria-hidden="true">✦</span> No account needed. Your calculation is not saved.</p>
+        </form>
+      </div>
+
+      <aside class="result-card {% if result %}has-result{% endif %}" aria-live="polite">
+        <div class="result-top">
+          <p class="section-kicker">YOUR BREAKDOWN</p>
+          <span class="result-icon">↗</span>
+        </div>
+        {% if result %}
+          <p class="result-caption">Each person pays</p>
+          <div class="result-amount"><span>₹</span>{{ "{:,}".format(result.per_person) }}</div>
+          <p class="result-subtitle">per person · {{ result.people }} people sharing</p>
+          <div class="result-divider"></div>
+          <div class="breakdown-row"><span>Flat rent</span><strong>₹{{ "{:,}".format(values.rent|int) }}</strong></div>
+          <div class="breakdown-row"><span>Food expenses</span><strong>₹{{ "{:,}".format(values.food|int) }}</strong></div>
+          <div class="breakdown-row"><span>Electricity cost</span><strong>₹{{ "{:,}".format(result.electricity_cost) }}</strong></div>
+          <div class="breakdown-row total-row"><span>Total expenses</span><strong>₹{{ "{:,}".format(result.total_expenses) }}</strong></div>
+          {% if result.remainder %}
+          <p class="rounding-note">₹{{ result.remainder }} remains after equal whole-rupee division. The calculator follows your original Python code's floor-division rule.</p>
+          {% endif %}
+          <button class="reset-button" type="button" onclick="window.location.href='/'">↻ Calculate again</button>
+        {% else %}
+          <div class="empty-state">
+            <div class="empty-illustration"><span>₹</span><i>＋</i></div>
+            <h3>Your result will appear here</h3>
+            <p>Fill in the expense details and calculate the amount each person needs to pay.</p>
+          </div>
+          <div class="mini-note"><span>✓</span> Simple, transparent expense sharing</div>
+        {% endif %}
+      </aside>
+    </section>
+
+    <footer>
+      <span>RentSplit <span class="footer-muted">· A simple flat expense calculator</span></span>
+      <span>MADE FOR SHARED LIVING</span>
+    </footer>
+  </main>
+</body>
+</html>
