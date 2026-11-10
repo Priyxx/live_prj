@@ -35,7 +35,7 @@ The final calculation intentionally preserves the original Python program's inte
    - Build command: `pip install -r requirements.txt`
    - Start command: `gunicorn app:app`
 5. Deploy. Render provides a free `onrender.com` URL.
-
+https://live-prj.onrender.com
 Note: Render free web services may spin down after inactivity, so the first request after a quiet period can take longer.
 
 ## Notes
